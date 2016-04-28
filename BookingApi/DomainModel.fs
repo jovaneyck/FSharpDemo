@@ -2,6 +2,7 @@
 
 open BookingApi.Messages
 open System
+open System.Collections
 
 module Reservations =
     
@@ -17,7 +18,7 @@ module Reservations =
             member this.GetEnumerator() = 
                 reservations.GetEnumerator()
             member this.GetEnumerator() = 
-                reservations.GetEnumerator() :> System.Collections.IEnumerator
+                reservations.GetEnumerator() :> IEnumerator
 
     let ToReservations reservations = 
         InMemoryReservations(reservations)
@@ -46,3 +47,20 @@ module Reservations =
             }
             |> EnvelopWithDefaults
             |> Some
+
+module Notifications =
+    type INotifications =
+        inherit seq<Envelope<Notification>>
+        abstract About : Guid -> seq<Envelope<Notification>>
+
+    type InMemoryNotifications(notifications) =
+        interface INotifications with
+            member this.About id = 
+                notifications
+                |> Seq.filter(fun n -> n.Item.About = id)
+            member this.GetEnumerator() = notifications.GetEnumerator()
+            member this.GetEnumerator() = notifications.GetEnumerator() :> IEnumerator
+
+    let ToNotifications notifications = InMemoryNotifications(notifications)
+    let About id (notifications : INotifications) =
+        notifications.About id

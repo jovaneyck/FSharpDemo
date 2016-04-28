@@ -8,6 +8,7 @@ open FSharp.Reactive
 open BookingApi.Infrastructure
 open BookingApi.Messages
 open BookingApi.Domain.Reservations
+open BookingApi.Domain.Notifications
 
 type Agent<'T> = MailboxProcessor<'T>
 
@@ -63,6 +64,7 @@ type Global() =
 
         Configure 
             (reservations |> ToReservations)
+            (notifications |> ToNotifications)
             (Observer.Create agent.Post)
             GlobalConfiguration.Configuration
             

@@ -9,3 +9,26 @@ type MakeReservationRendition = {
         Email : string
         Quantity : int 
     }
+
+[<CLIMutable>]
+type NotificationRendition = {
+    About : string
+    Type : string
+    Message : string
+}
+
+[<CLIMutable>]
+type NotificationListRendition = {
+    Notifications : NotificationRendition array
+}
+
+[<CLIMutable>]
+type LinkRendition = {
+    Rel : string
+    Href : string
+}
+
+[<CLIMutable>]
+type LinkListRendition = {
+    Links : LinkRendition array
+}

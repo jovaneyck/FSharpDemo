@@ -11,28 +11,33 @@ open System.Web.Http.Controllers
 open BookingApi.HttpApi
 open BookingApi.Messages
 open BookingApi.Domain.Reservations
+open BookingApi.Domain.Notifications
 
-type CompositionRoot(reservations: IReservations, reservationRequestObserver) =
+type CompositionRoot(reservations: IReservations, 
+                     notifications: INotifications,
+                     reservationRequestObserver) =
     interface IHttpControllerActivator with
         member this.Create(request, controllerDescriptor, controllerType) =
             if controllerType = typeof<HomeController> then
                 new HomeController() :> IHttpController
-            elif controllerType = typeof<ReservationController> then
-                let c = new ReservationController()
+            elif controllerType = typeof<ReservationsController> then
+                let c = new ReservationsController()
                 c
                 |> Observable.subscribeObserver reservationRequestObserver
                 |> request.RegisterForDispose
                 c :> IHttpController
+            elif controllerType = typeof<NotificationsController> then
+                new NotificationsController(notifications) :> IHttpController
             else
                 raise
                 <| ArgumentException(
                     sprintf "Unknown controller type requested: %O" controllerType,
                     "controllerType")
 
-let ConfigureCompositionRoot reservations reservationRequestObserver (config : HttpConfiguration) =
+let ConfigureCompositionRoot reservations notifications reservationRequestObserver (config : HttpConfiguration) =
     config.Services.Replace(
         typeof<IHttpControllerActivator>,
-        CompositionRoot(reservations, reservationRequestObserver))
+        CompositionRoot(reservations, notifications, reservationRequestObserver))
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
@@ -47,7 +52,7 @@ let ConfigureFormatting (configuration : HttpConfiguration) =
     configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver
         <- Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
 
-let Configure reservations reservationRequestObserver c = 
+let Configure reservations notifications reservationRequestObserver c = 
     ConfigureRoutes c
-    ConfigureCompositionRoot reservations reservationRequestObserver c
+    ConfigureCompositionRoot reservations notifications reservationRequestObserver c
     ConfigureFormatting c

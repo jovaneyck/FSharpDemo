@@ -7,6 +7,7 @@ open System.Web.Http
 open System.Reactive.Subjects
 open BookingApi.Renditions
 open BookingApi.Messages
+open BookingApi.Domain.Notifications
 
 type HomeController() =
     inherit ApiController()
@@ -15,7 +16,7 @@ type HomeController() =
             HttpStatusCode.OK,
             "Hello world!")
 
-type ReservationController() =
+type ReservationsController() =
     inherit ApiController()
 
     let subject = new Subject<Envelope<MakeReservation>>()
@@ -33,7 +34,35 @@ type ReservationController() =
                 Email = rendition.Email
                 Quantity = rendition.Quantity
             }
+        let env = cmd |> EnvelopWithDefaults
             
-        subject.OnNext (cmd |> EnvelopWithDefaults)
+        subject.OnNext env
 
-        new HttpResponseMessage(HttpStatusCode.Accepted)
+        this.Request.CreateResponse(
+            HttpStatusCode.Accepted,
+            {
+                Links = 
+                    [| {
+                        Rel = "http://my.app/notification"
+                        Href = "notifications/"  + env.Id.ToString()
+                    } |]
+            })
+
+type NotificationsController(notifications : INotifications) =
+    inherit ApiController()
+
+    member this.Get id =
+        let toRendition (n: Envelope<Notification>) : NotificationRendition = {
+            About = n.Item.About.ToString()
+            Type = n.Item.Type
+            Message = n.Item.Message
+        }
+        let matches = 
+            notifications 
+            |> About id
+            |> Seq.map toRendition
+            |> Seq.toArray
+
+        this.Request.CreateResponse(
+            HttpStatusCode.OK,
+            { Notifications = matches })
