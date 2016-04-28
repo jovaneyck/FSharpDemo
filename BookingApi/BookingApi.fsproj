@@ -59,8 +59,12 @@
     <Content Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Control.Reactive">
+      <HintPath>..\packages\FSharp.Control.Reactive.3.4.1\lib\net45\FSharp.Control.Reactive.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FSharp.Reactive">
-      <HintPath>..\packages\FSharp.Reactive.2.0.121121\lib\net40\FSharp.Reactive.dll</HintPath>
+      <HintPath>..\packages\FSharp.Reactive.2.1.131002\lib\net40\FSharp.Reactive.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
@@ -80,15 +84,15 @@
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reactive.Core">
-      <HintPath>..\packages\FSharp.Reactive.2.0.121121\lib\net40\System.Reactive.Core.dll</HintPath>
+      <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.Interfaces">
-      <HintPath>..\packages\FSharp.Reactive.2.0.121121\lib\net40\System.Reactive.Interfaces.dll</HintPath>
+      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Reactive.Linq">
-      <HintPath>..\packages\FSharp.Reactive.2.0.121121\lib\net40\System.Reactive.Linq.dll</HintPath>
+      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http">
