@@ -2,6 +2,8 @@
 
 open System
 open System.Net.Http
+open System.Reactive
+
 open System.Web.Http
 open System.Web.Http.Dispatcher
 open System.Web.Http.Controllers
@@ -11,10 +13,8 @@ open BookingApi.Domain.Reservations
 
 type Agent<'T> = MailboxProcessor<'T>
 
-type CompositionRoot() =
+type CompositionRoot(reservations: Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>) =
     let maximumCapacity = 10
-    let reservations =
-        Collections.Concurrent.ConcurrentBag<Envelope<Reservation>>()
 
     let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
         let rec loop () = 
@@ -46,10 +46,10 @@ type CompositionRoot() =
                     sprintf "Unknown controller type requested: %O" controllerType,
                     "controllerType")
 
-let ConfigureCompositionRoot (config : HttpConfiguration) =
+let ConfigureCompositionRoot reservations (config : HttpConfiguration) =
     config.Services.Replace(
         typeof<IHttpControllerActivator>,
-        CompositionRoot())
+        CompositionRoot(reservations))
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
@@ -64,7 +64,7 @@ let ConfigureFormatting (configuration : HttpConfiguration) =
     configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver
         <- Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
 
-let Configure c = 
+let Configure reservations c = 
     ConfigureRoutes c
-    ConfigureCompositionRoot c
+    ConfigureCompositionRoot reservations c
     ConfigureFormatting c
