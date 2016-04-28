@@ -52,6 +52,8 @@
   <ItemGroup>
     <Compile Include="Infrastructure.fs" />
     <Content Include="packages.config" />
+    <Compile Include="Renditions.fs" />
+    <Compile Include="Controllers.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

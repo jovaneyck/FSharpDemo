@@ -98,7 +98,6 @@
     <Content Include="packages.config" />
     <Content Include="web.config" />
     <Compile Include="Infrastructure.fs" />
-    <Compile Include="Api.fs" />
     <Content Include="Global.asax" />
   </ItemGroup>
   <ItemGroup>

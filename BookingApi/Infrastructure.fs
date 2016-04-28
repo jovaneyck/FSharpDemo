@@ -9,6 +9,12 @@ let ConfigureRoutes (configuration : HttpConfiguration) =
             "DefaultAPI",
             "{controller}/{id}",
             { Controller = "Home"; Id = RouteParameter.Optional }) 
-        |> ignore
+    |> ignore
 
-let Configure = ConfigureRoutes
+let ConfigureFormatting (configuration : HttpConfiguration) =
+    configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver
+        <- Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+
+let Configure c = 
+    ConfigureRoutes c
+    ConfigureFormatting c
