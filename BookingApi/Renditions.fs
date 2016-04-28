@@ -9,4 +9,3 @@ type MakeReservationRendition = {
         Email : string
         Quantity : int 
     }
-

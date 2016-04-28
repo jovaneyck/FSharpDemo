@@ -1,0 +1,56 @@
+{
+	"id": "a5d0ff41-e95c-d095-57a1-f6fe99770788",
+	"name": "BookingAPI",
+	"description": "",
+	"order": [
+		"2a055f01-f188-5815-08bc-83a2b17cd3d4",
+		"d5602b73-90ce-4609-7262-d6f1c42d7cb0"
+	],
+	"folders": [],
+	"timestamp": 1461852278454,
+	"owner": "41233",
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "2a055f01-f188-5815-08bc-83a2b17cd3d4",
+			"headers": "",
+			"url": "http://localhost:60958/",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1461852360562,
+			"name": "ping http://localhost:60958/",
+			"description": "",
+			"collectionId": "a5d0ff41-e95c-d095-57a1-f6fe99770788",
+			"responses": [],
+			"rawModeData": ""
+		},
+		{
+			"id": "d5602b73-90ce-4609-7262-d6f1c42d7cb0",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:60958/Reservation",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1461852754361,
+			"name": "make reservation",
+			"description": "",
+			"collectionId": "a5d0ff41-e95c-d095-57a1-f6fe99770788",
+			"responses": [],
+			"rawModeData": "{\n    \"name\": \"John Doe\",\n    \"date\": \"04/28/2016\",\n    \"email\": \"john@doe.com\",\n    \"quantity\": 4\n}"
+		}
+	]
+}
