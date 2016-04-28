@@ -5,7 +5,7 @@ open System
 [<CLIMutable>]
 type MakeReservationRendition = { 
         Name : string
-        Date : DateTimeOffset
+        Date : string
         Email : string
         Quantity : int 
     }
