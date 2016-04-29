@@ -44,7 +44,7 @@ type ReservationsController() =
                 Links = 
                     [| {
                         Rel = "http://my.app/notification"
-                        Href = "notifications/"  + env.Id.ToString()
+                        Href = "/notifications/"  + env.Id.ToString()
                     } |]
             })
 
