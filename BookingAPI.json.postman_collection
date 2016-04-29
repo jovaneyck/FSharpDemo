@@ -35,7 +35,7 @@
 		{
 			"id": "d5602b73-90ce-4609-7262-d6f1c42d7cb0",
 			"headers": "Content-Type: application/json\n",
-			"url": "http://localhost:60958/Reservation",
+			"url": "http://localhost:60958/Reservations",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "POST",
@@ -45,12 +45,12 @@
 			"tests": "",
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1461852754361,
+			"time": 1461870853925,
 			"name": "make reservation",
 			"description": "",
 			"collectionId": "a5d0ff41-e95c-d095-57a1-f6fe99770788",
 			"responses": [],
-			"rawModeData": "{\n    \"name\": \"John Doe\",\n    \"date\": \"04/28/2016\",\n    \"email\": \"john@doe.com\",\n    \"quantity\": 4\n}"
+			"rawModeData": "{\n    \"name\": \"John Doe\",\n    \"date\": \"28/04/2016\",\n    \"email\": \"john@doe.com\",\n    \"quantity\": 4\n}"
 		}
 	]
 }
