@@ -22,7 +22,7 @@ module Dates =
         | Month(y,m) -> generate (DateTime(y,m,1)) (fun d -> d.Month = m)
         | Day(y,m,d) -> DateTime(y,m,d) |> Seq.singleton
 
-    let BoundariesOff period =
+    let BoundariesOf period =
         let getBoundaries firstTick (next : DateTime -> DateTime) =
             let lastTick = next(firstTick).AddTicks -1L
             (firstTick, lastTick)
