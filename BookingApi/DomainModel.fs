@@ -4,12 +4,12 @@ open BookingApi.Messages
 open System
 open System.Collections
 
-module Dates = 
-    type Period =
+type Period =
         | Year of int
         | Month of int * int //(year, month)
         | Day of int * int * int //(year, month, day)
 
+module Dates = 
     let InitInfinite (start : DateTime) =
         start 
         |> Seq.unfold (fun date -> Some(date, date.AddDays 1.0))

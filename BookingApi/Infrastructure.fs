@@ -30,7 +30,7 @@ type CompositionRoot(reservations: IReservations,
             elif controllerType = typeof<NotificationsController> then
                 new NotificationsController(notifications) :> IHttpController
             elif controllerType = typeof<AvailabilityController> then
-                new AvailabilityController(seatingCapacity) :> IHttpController
+                new AvailabilityController(reservations, seatingCapacity) :> IHttpController
             else
                 raise
                 <| ArgumentException(

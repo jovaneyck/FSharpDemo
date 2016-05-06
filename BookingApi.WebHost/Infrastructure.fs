@@ -15,7 +15,7 @@ type Agent<'T> = MailboxProcessor<'T>
 type Global() =
     inherit System.Web.HttpApplication()
     member this.Application_Start (sender : obj) (e : EventArgs) =
-        let maximumCapacity = 10
+        let seatingCapacity = 10
         let reservations = ConcurrentBag<Envelope<Reservation>>()
         let notifications = ConcurrentBag<Envelope<Notification>>()
         
@@ -33,7 +33,7 @@ type Global() =
                 async{
                     let! command = inbox.Receive()
                     let res = reservations |> ToReservations
-                    let handle = Handle maximumCapacity res
+                    let handle = Handle seatingCapacity res
                     let newReservation = handle command
                     match newReservation with
                     | Some(r) -> 
@@ -66,6 +66,6 @@ type Global() =
             (reservations |> ToReservations)
             (notifications |> ToNotifications)
             (Observer.Create agent.Post)
-            maximumCapacity
+            seatingCapacity
             GlobalConfiguration.Configuration
             
