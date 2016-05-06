@@ -83,3 +83,16 @@ type AvailabilityController(seatingCapacity : int) =
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = availabilities })
+    
+    member this.Get(year, month) =
+        let availabilities =
+            Dates.In (Dates.Month(year, month))
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString "yyyy.MM.dd"
+                    FreeSeats = seatingCapacity
+                })
+            |> Seq.toArray
+        this.Request.CreateResponse(
+            HttpStatusCode.OK,
+            { Openings = availabilities })
