@@ -4,8 +4,34 @@ open BookingApi.Messages
 open System
 open System.Collections
 
+module Dates = 
+    type Period =
+        | Year of int
+        | Month of int * int //(year, month)
+        | Day of int * int * int //(year, month, day)
+
+    let InitInfinite (start : DateTime) =
+        start 
+        |> Seq.unfold (fun date -> Some(date, date.AddDays 1.0))
+
+    let In period =
+        let generate startDate predicate = 
+            startDate |> InitInfinite |> Seq.takeWhile predicate
+        match period with
+        | Year(y) -> generate (DateTime(y,1,1)) (fun d -> d.Year = y)
+        | Month(y,m) -> generate (DateTime(y,m,1)) (fun d -> d.Month = m)
+        | Day(y,m,d) -> DateTime(y,m,d) |> Seq.singleton
+
+    let BoundariesOff period =
+        let getBoundaries firstTick (next : DateTime -> DateTime) =
+            let lastTick = next(firstTick).AddTicks -1L
+            (firstTick, lastTick)
+        match period with
+        | Year(y) -> getBoundaries (DateTime(y,1,1)) (fun d -> d.AddYears 1)
+        | Month(y,m) -> getBoundaries (DateTime(y,m,1)) (fun d -> d.AddMonths 1)
+        | Day(y,m,d) -> getBoundaries (DateTime(y,m,d)) (fun d -> d.AddDays 1.0)
+
 module Reservations =
-    
     type IReservations =
         inherit seq<Envelope<Reservation>>
         abstract Between : DateTime -> DateTime -> seq<Envelope<Reservation>>
