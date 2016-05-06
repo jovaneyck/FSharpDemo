@@ -55,9 +55,14 @@ type HttpRouteDefaults = { Controller : string; Id : obj }
 
 let ConfigureRoutes (configuration : HttpConfiguration) =
     configuration.Routes.MapHttpRoute(
+        "Availabilities",
+        "Availability/{year}",
+        { Controller = "Availability"; Id = RouteParameter.Optional })
+    |> ignore
+    configuration.Routes.MapHttpRoute(
             "DefaultAPI",
             "{controller}/{id}",
-            { Controller = "Home"; Id = RouteParameter.Optional }) 
+            { Controller = "Home"; Id = RouteParameter.Optional })
     |> ignore
 
 let ConfigureFormatting (configuration : HttpConfiguration) =
