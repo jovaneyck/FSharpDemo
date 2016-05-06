@@ -72,6 +72,7 @@ type AvailabilityController(seatingCapacity : int) =
     inherit ApiController()
 
     let dateFormat = "yyyy.MM.dd"
+    let today = DateTimeOffset.Now.Date
 
     member this.Get year =
         let availabilities =
@@ -79,7 +80,7 @@ type AvailabilityController(seatingCapacity : int) =
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString dateFormat
-                    FreeSeats = seatingCapacity
+                    FreeSeats = if d < today then 0 else seatingCapacity
                 })
             |> Seq.toArray
         this.Request.CreateResponse(
@@ -92,17 +93,18 @@ type AvailabilityController(seatingCapacity : int) =
             |> Seq.map (fun d ->
                 {
                     Date = d.ToString dateFormat
-                    FreeSeats = seatingCapacity
+                    FreeSeats = if d < today then 0 else seatingCapacity
                 })
             |> Seq.toArray
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = availabilities })
     member this.Get(year, month, day) =
+        let requestedDate = DateTime(year,month,day)
         let opening = 
             { 
-                Date = DateTime(year,month,day).ToString dateFormat
-                FreeSeats = seatingCapacity
+                Date = requestedDate.ToString dateFormat
+                FreeSeats = if requestedDate < today then 0 else seatingCapacity
             }
         this.Request.CreateResponse(
             HttpStatusCode.OK,
