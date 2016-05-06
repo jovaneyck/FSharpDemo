@@ -4,7 +4,8 @@
 	"description": "",
 	"order": [
 		"2a055f01-f188-5815-08bc-83a2b17cd3d4",
-		"d5602b73-90ce-4609-7262-d6f1c42d7cb0"
+		"d5602b73-90ce-4609-7262-d6f1c42d7cb0",
+		"ff0a4a5e-dd48-3108-3cfe-0dcae336ed90"
 	],
 	"folders": [],
 	"timestamp": 1461852278454,
@@ -51,6 +52,26 @@
 			"collectionId": "a5d0ff41-e95c-d095-57a1-f6fe99770788",
 			"responses": [],
 			"rawModeData": "{\n    \"name\": \"John Doe\",\n    \"date\": \"28/04/2016\",\n    \"email\": \"john@doe.com\",\n    \"quantity\": 4\n}"
+		},
+		{
+			"id": "ff0a4a5e-dd48-3108-3cfe-0dcae336ed90",
+			"headers": "",
+			"url": "http://localhost:60958/Availability?year=2016",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1462543601132,
+			"name": "Availabilities this year",
+			"description": "",
+			"collectionId": "a5d0ff41-e95c-d095-57a1-f6fe99770788",
+			"responses": [],
+			"rawModeData": ""
 		}
 	]
 }

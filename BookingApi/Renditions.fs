@@ -32,3 +32,14 @@ type LinkRendition = {
 type LinkListRendition = {
     Links : LinkRendition array
 }
+
+[<CLIMutable>]
+type OpeningsRendition = {
+    Date : string
+    FreeSeats : int
+}
+
+[<CLIMutable>]
+type AvailabilityRendition = {
+    Openings : OpeningsRendition array
+}

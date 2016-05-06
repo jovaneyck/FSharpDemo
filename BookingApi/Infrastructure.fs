@@ -15,7 +15,8 @@ open BookingApi.Domain.Notifications
 
 type CompositionRoot(reservations: IReservations, 
                      notifications: INotifications,
-                     reservationRequestObserver) =
+                     reservationRequestObserver,
+                     seatingCapacity) =
     interface IHttpControllerActivator with
         member this.Create(request, controllerDescriptor, controllerType) =
             if controllerType = typeof<HomeController> then
@@ -28,16 +29,27 @@ type CompositionRoot(reservations: IReservations,
                 c :> IHttpController
             elif controllerType = typeof<NotificationsController> then
                 new NotificationsController(notifications) :> IHttpController
+            elif controllerType = typeof<AvailabilityController> then
+                new AvailabilityController(seatingCapacity) :> IHttpController
             else
                 raise
                 <| ArgumentException(
                     sprintf "Unknown controller type requested: %O" controllerType,
                     "controllerType")
 
-let ConfigureCompositionRoot reservations notifications reservationRequestObserver (config : HttpConfiguration) =
-    config.Services.Replace(
-        typeof<IHttpControllerActivator>,
-        CompositionRoot(reservations, notifications, reservationRequestObserver))
+let ConfigureCompositionRoot 
+    reservations 
+    notifications 
+    reservationRequestObserver 
+    seatingCapacity
+    (config : HttpConfiguration) =
+        config.Services.Replace(
+            typeof<IHttpControllerActivator>,
+            CompositionRoot(
+                reservations, 
+                notifications, 
+                reservationRequestObserver,
+                seatingCapacity))
 
 type HttpRouteDefaults = { Controller : string; Id : obj }
 
@@ -52,7 +64,17 @@ let ConfigureFormatting (configuration : HttpConfiguration) =
     configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver
         <- Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
 
-let Configure reservations notifications reservationRequestObserver c = 
+let Configure 
+        reservations 
+        notifications 
+        reservationRequestObserver 
+        seatingCapacity
+        c = 
     ConfigureRoutes c
-    ConfigureCompositionRoot reservations notifications reservationRequestObserver c
+    ConfigureCompositionRoot 
+        reservations 
+        notifications 
+        reservationRequestObserver 
+        seatingCapacity
+        c
     ConfigureFormatting c

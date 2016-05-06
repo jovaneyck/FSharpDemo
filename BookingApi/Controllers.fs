@@ -8,6 +8,7 @@ open System.Reactive.Subjects
 open BookingApi.Renditions
 open BookingApi.Messages
 open BookingApi.Domain.Notifications
+open BookingApi.Domain
 
 type HomeController() =
     inherit ApiController()
@@ -66,3 +67,19 @@ type NotificationsController(notifications : INotifications) =
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Notifications = matches })
+
+type AvailabilityController(seatingCapacity : int) =
+    inherit ApiController()
+
+    member this.Get year =
+        let availabilities =
+            Dates.In (Dates.Year(year))
+            |> Seq.map (fun d ->
+                {
+                    Date = d.ToString "yyyy.MM.dd"
+                    FreeSeats = seatingCapacity
+                })
+            |> Seq.toArray
+        this.Request.CreateResponse(
+            HttpStatusCode.OK,
+            { Openings = availabilities })

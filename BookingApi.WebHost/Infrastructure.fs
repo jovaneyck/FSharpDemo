@@ -66,5 +66,6 @@ type Global() =
             (reservations |> ToReservations)
             (notifications |> ToNotifications)
             (Observer.Create agent.Post)
+            maximumCapacity
             GlobalConfiguration.Configuration
             
