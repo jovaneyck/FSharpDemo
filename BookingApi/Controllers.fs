@@ -71,12 +71,14 @@ type NotificationsController(notifications : INotifications) =
 type AvailabilityController(seatingCapacity : int) =
     inherit ApiController()
 
+    let dateFormat = "yyyy.MM.dd"
+
     member this.Get year =
         let availabilities =
             Dates.In (Dates.Year(year))
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString "yyyy.MM.dd"
+                    Date = d.ToString dateFormat
                     FreeSeats = seatingCapacity
                 })
             |> Seq.toArray
@@ -89,10 +91,19 @@ type AvailabilityController(seatingCapacity : int) =
             Dates.In (Dates.Month(year, month))
             |> Seq.map (fun d ->
                 {
-                    Date = d.ToString "yyyy.MM.dd"
+                    Date = d.ToString dateFormat
                     FreeSeats = seatingCapacity
                 })
             |> Seq.toArray
         this.Request.CreateResponse(
             HttpStatusCode.OK,
             { Openings = availabilities })
+    member this.Get(year, month, day) =
+        let opening = 
+            { 
+                Date = DateTime(year,month,day).ToString dateFormat
+                FreeSeats = seatingCapacity
+            }
+        this.Request.CreateResponse(
+            HttpStatusCode.OK,
+            { Openings = [| opening |]})

@@ -65,6 +65,11 @@ let ConfigureRoutes (configuration : HttpConfiguration) =
         { Controller = "Availability"; Id = RouteParameter.Optional })
     |> ignore
     configuration.Routes.MapHttpRoute(
+        "AvailabilitiesDay",
+        "Availability/{year}/{month}/{day}",
+        { Controller = "Availability"; Id = RouteParameter.Optional })
+    |> ignore
+    configuration.Routes.MapHttpRoute(
             "DefaultAPI",
             "{controller}/{id}",
             { Controller = "Home"; Id = RouteParameter.Optional })
