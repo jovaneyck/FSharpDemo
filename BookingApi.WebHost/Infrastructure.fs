@@ -164,8 +164,8 @@ type Global() =
 
         resetStorage()
 
-        GlobalConfiguration.Configuration.Filters.Add 
-            (ErrorsInFiles(Path.Combine(rootDir, "Errors")))
+        let errorHandler = ErrorsInFiles(Path.Combine(rootDir, "Errors"))
+        GlobalConfiguration.Configuration.Filters.Add errorHandler
 
         let reservations = 
             ReservationsInFiles(
@@ -187,33 +187,36 @@ type Global() =
 
         let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
             let rec loop () = 
-                async{
-                    let! command = inbox.Receive()
-                    let handle = Handle seatingCapacity reservations
-                    let newReservation = handle command
-                    match newReservation with
-                    | Some(r) -> 
-                        reservationSubject.OnNext r
-                        notificationsSubject.OnNext
-                            {
-                                About = command.Id
-                                Type = "Success"
-                                Message = 
-                                    sprintf
-                                        "Your reservation for %s was completed. See you soon!"
-                                        (command.Item.Date.ToString "dd/MM/yyyy")
-                            }
-                    | None -> 
-                        notificationsSubject.OnNext
-                            {
-                                About = command.Id
-                                Type = "Failure"
-                                Message = 
-                                    sprintf
-                                        "We are sorry to inform you that your reservation for %s could not be completed."
-                                        (command.Item.Date.ToString "dd/MM/yyyy")
-                            }
-                    return! loop()
+                async{ 
+                    try
+                        let! command = inbox.Receive()
+                        let handle = Handle seatingCapacity reservations
+                        let newReservation = handle command
+                        match newReservation with
+                        | Some(r) -> 
+                            reservationSubject.OnNext r
+                            notificationsSubject.OnNext
+                                {
+                                    About = command.Id
+                                    Type = "Success"
+                                    Message = 
+                                        sprintf
+                                            "Your reservation for %s was completed. See you soon!"
+                                            (command.Item.Date.ToString "dd/MM/yyyy")
+                                }
+                        | None -> 
+                            notificationsSubject.OnNext
+                                {
+                                    About = command.Id
+                                    Type = "Failure"
+                                    Message = 
+                                        sprintf
+                                            "We are sorry to inform you that your reservation for %s could not be completed."
+                                            (command.Item.Date.ToString "dd/MM/yyyy")
+                                }
+                        return! loop()
+                    with
+                        e -> errorHandler.Write e
                 }
             loop())
         do agent.Start()
