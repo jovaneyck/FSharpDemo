@@ -186,6 +186,24 @@ type Global() =
         |> ignore
 
         let agent = new Agent<Envelope<MakeReservation>>(fun inbox ->
+            let buildSuccessNotification (command : Envelope<MakeReservation>) =
+                {
+                    About = command.Id
+                    Type = "Success"
+                    Message = 
+                        sprintf
+                            "Your reservation for %s was completed. See you soon!"
+                            (command.Item.Date.ToString "dd/MM/yyyy")
+                }
+            let buildFailedNotification (command : Envelope<MakeReservation>) =
+                {
+                    About = command.Id
+                    Type = "Failure"
+                    Message = 
+                        sprintf
+                            "We are sorry to inform you that your reservation for %s could not be completed."
+                            (command.Item.Date.ToString "dd/MM/yyyy")
+                }
             let rec loop () = 
                 async{ 
                     try
@@ -195,25 +213,9 @@ type Global() =
                         match newReservation with
                         | Some(r) -> 
                             reservationSubject.OnNext r
-                            notificationsSubject.OnNext
-                                {
-                                    About = command.Id
-                                    Type = "Success"
-                                    Message = 
-                                        sprintf
-                                            "Your reservation for %s was completed. See you soon!"
-                                            (command.Item.Date.ToString "dd/MM/yyyy")
-                                }
+                            notificationsSubject.OnNext (buildSuccessNotification command)
                         | None -> 
-                            notificationsSubject.OnNext
-                                {
-                                    About = command.Id
-                                    Type = "Failure"
-                                    Message = 
-                                        sprintf
-                                            "We are sorry to inform you that your reservation for %s could not be completed."
-                                            (command.Item.Date.ToString "dd/MM/yyyy")
-                                }
+                            notificationsSubject.OnNext (buildFailedNotification command)
                         return! loop()
                     with
                         e -> errorHandler.Write e
@@ -227,4 +229,3 @@ type Global() =
             (Observer.Create agent.Post)
             seatingCapacity
             GlobalConfiguration.Configuration
-            
