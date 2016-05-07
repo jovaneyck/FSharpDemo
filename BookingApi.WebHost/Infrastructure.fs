@@ -110,6 +110,39 @@ type NotificationsInFiles(directory : DirectoryInfo) =
             (this :> seq<Envelope<Notification>>).GetEnumerator()
                 :> System.Collections.IEnumerator
 
+type ErrorsInFiles(rootDirectory : string) =
+    let getPath (d : DateTime) =
+        String.Join(
+            "/",
+            [
+                d.Year.ToString()
+                d.Month.ToString()
+                d.Day.ToString()
+            ])
+
+    let appendPath p2 p1 = Path.Combine(p1, p2)
+    let withExtension extension path = 
+        Path.ChangeExtension(path, extension) 
+
+    member this.Write (ex : Exception) =
+        let directoryName = 
+            rootDirectory
+            |> appendPath (getPath DateTimeOffset.Now.Date)
+        let fileName =
+            directoryName
+            |> appendPath (Guid.NewGuid().ToString())
+            |> withExtension "txt"
+
+        Directory.CreateDirectory directoryName |> ignore
+        File.WriteAllText(fileName, ex.ToString())
+    
+    interface System.Web.Http.Filters.IExceptionFilter with
+        member this.AllowMultiple = true
+        member this.ExecuteExceptionFilterAsync(actionExecutedContext, 
+                                                cancellationToken) = 
+            System.Threading.Tasks.Task.Factory.StartNew(
+                fun () -> this.Write (actionExecutedContext.Exception))
+            
 type Agent<'a> = MailboxProcessor<'a>
 
 type Global() =
@@ -130,6 +163,9 @@ type Global() =
             Directory.CreateDirectory(rootDir) |> ignore
 
         resetStorage()
+
+        GlobalConfiguration.Configuration.Filters.Add 
+            (ErrorsInFiles(Path.Combine(rootDir, "Errors")))
 
         let reservations = 
             ReservationsInFiles(
