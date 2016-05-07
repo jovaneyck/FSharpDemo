@@ -46,9 +46,6 @@ module Reservations =
             member this.GetEnumerator() = 
                 reservations.GetEnumerator() :> IEnumerator
 
-    let ToReservations reservations = 
-        InMemoryReservations(reservations)
-
     let Between min max (reservations : IReservations) =
         reservations.Between min max
 
@@ -87,6 +84,5 @@ module Notifications =
             member this.GetEnumerator() = notifications.GetEnumerator()
             member this.GetEnumerator() = notifications.GetEnumerator() :> IEnumerator
 
-    let ToNotifications notifications = InMemoryNotifications(notifications)
     let About id (notifications : INotifications) =
         notifications.About id
